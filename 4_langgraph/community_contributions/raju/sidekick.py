@@ -57,21 +57,10 @@ class Sidekick:
         planner_llm = ChatOpenRouter(model="deepseek/deepseek-v3.2")
         self.planner_llm_with_output = planner_llm.with_structured_output(ToolsOutput) 
         
-        #Deepseek is reasoning model, sent result in 'reasoning' instead of 'content' field.
         worker_llm = ChatOpenRouter(model="minimax/minimax-m2.1")
         self.worker_llm_with_tools = worker_llm.bind_tools(self.tools)
              
         evaluator_llm = ChatOpenRouter(model="minimax/minimax-m2.1")
-        #Deepseek not sent struct_output 4 times in a row, even after adding extra args
-        # ChatOpenRouter(model="deepseek/deepseek-v3.2",
-        #                                 temperature=0,
-        #                                 max_tokens=300,
-        #                                 model_kwargs={
-        #                                     "response_format": {
-        #                                         "type": "json_object"
-        #                                     }
-        #                                 }
-        #                             )
         self.evaluator_llm_with_output = evaluator_llm.with_structured_output(EvaluatorOutput)
         await self.build_graph()
 
@@ -89,7 +78,7 @@ class Sidekick:
         response = self.planner_llm_with_output.invoke(messages)
 
         #msg not required
-        msg_list = [] #if len(response.tools) == 0 else [AIMessage(content=f"These are the planned tools need to be called for user query: {response.tools}")]
+        msg_list = []
 
         # Return updated state
         return {
@@ -276,3 +265,4 @@ class Sidekick:
                 asyncio.run(self.browser.close())
                 if self.playwright:
                     asyncio.run(self.playwright.stop())
+
