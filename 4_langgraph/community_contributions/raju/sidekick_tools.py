@@ -22,25 +22,13 @@ async def playwright_tools():
     toolkit = PlayWrightBrowserToolkit.from_browser(async_browser=browser)
     return toolkit.get_tools(), browser, playwright
 
-# def push(text: str):
-#     """Send a push notification to the user"""
-#     requests.post(pushover_url, data = {"token": pushover_token, "user": pushover_user, "message": text})
-#     return "success"
-
 def get_file_tools():
     toolkit = FileManagementToolkit(root_dir="sandbox")
     return toolkit.get_tools()
 
 
 def other_tools():
-    #email_tool = Tool(name="send_email", func=send_email, description="Use this tool when you want to send an email")
     file_tools = get_file_tools()
-
-    # tool_search =Tool(
-    #     name="search",
-    #     func=serper.run,
-    #     description="Use this tool when you want to get the results of an online web search"
-    # )
 
     tool_search = GoogleSerperRun(api_wrapper=serper)
     wiki_tool = WikipediaQueryRun(api_wrapper=wikipedia)
@@ -55,3 +43,4 @@ def tool_purpose(all_tools=[]):
         msg += f"Name:{tool.name} - Description:{tool.description}\n"
     
     return msg
+
